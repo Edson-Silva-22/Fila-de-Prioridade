@@ -63,11 +63,13 @@ class Fila {
     private:
         Fixa* front = nullptr;
         Fixa* instanciaAnterior = nullptr;
+        Fixa* ultimo_P = nullptr;
 
     public:
         void empilhar(char preferencial, char operação){
             Fixa* newFixa = new Fixa(preferencial, operação);
             Fixa* fixaAnterior = nullptr;
+            Fixa* ant_atnterior = nullptr;
             if(front == nullptr){
                 //newFixa é a instancia que esta sendo criada no momento
                 //o proximo e anterior dessa instancia sera null pois é a primeira instancia criada
@@ -77,9 +79,17 @@ class Fila {
                 //front apontara para essa nova instancia que foi criada
                 front = newFixa;
                 instanciaAnterior = newFixa;
+
+                if (front->preferencial == 'P')
+                {
+                    ultimo_P = newFixa;
+                    ultimo_P->proximo = newFixa->proximo;
+                    ultimo_P->anterior = newFixa->anterior;
+                }
+                
             }
             else{
-                //fixaAnterior recebe front que por sua vez apota para a ultima instancia de Fixa que foi criada
+                //fixaAnterior recebe instanciaAnterior que por sua vez apota para a ultima instancia de Fixa que foi criada
                 fixaAnterior = instanciaAnterior;
 
                 //o proximo da instancia anterior vai apota para a nova instancia que está sendo criada
@@ -88,23 +98,43 @@ class Fila {
                 //o anterior da instancia anterior vai apota para instanciaAnterior que por sua vez apota para a ultima instancia de Fixa que foi criada
                 fixaAnterior->anterior = instanciaAnterior->anterior;
 
-                //o proximo da instancia que esta sendo criada no momento vai apota para nullptr pois ela sempre será a ultima instancia de Fixa criada
-                newFixa->proximo = nullptr;
 
-                //o anterior da instancia que esta sendo criada no momento vai apontar para a instancia anterior que no caso é fixaAnterior
+                newFixa->proximo = nullptr;
                 newFixa->anterior = fixaAnterior;
 
-
                 instanciaAnterior = newFixa;
-                
-                cout << "Fixa Atual: " << fixaAnterior->preferencial << fixaAnterior->operação << setfill('0') << setw(3) << fixaAnterior->numero;
-
-                cout << " Proximo: " << fixaAnterior->proximo->preferencial << fixaAnterior->proximo->operação << setfill('0') << setw(3) << fixaAnterior->proximo->numero << " " << "Anterior: " << fixaAnterior->anterior << " ";
-
-                cout << "Front: " << front->preferencial << front->operação << setfill('0') << setw(3) << front->numero << " ";
             }
 
             cout << endl;
+        }
+
+
+         //desenfileirar
+        void dequeue() {
+            if (!isEmpty()) {
+                Fixa* nodeToDelete = front;
+                front = front->proximo;
+                delete nodeToDelete;
+            }
+        }
+        
+        //checa se está vazia
+        bool isEmpty(){
+            return front == nullptr;
+        }
+        
+        //imprimir elementos
+        void print(){
+            if (isEmpty()) {
+                cout << "Priority queue is empty." << endl;
+                return;
+            }
+
+            Fixa* current = front;
+            while (current != nullptr) {
+                cout << "Fixa Atual: " << current->preferencial << current->operação << setfill('0') << setw(3) << current->numero << endl;
+                current = current->proximo;
+            }
         }
 };
 
@@ -117,6 +147,53 @@ int main(){
     filaDePrioridade.empilhar('N', 'S');
     filaDePrioridade.empilhar('P', 'E');
     filaDePrioridade.empilhar('N', 'D');
+    filaDePrioridade.empilhar('P', 'E');
+    filaDePrioridade.empilhar('N', 'D');
+    filaDePrioridade.empilhar('N', 'F');
+    filaDePrioridade.empilhar('P', 'D');
+
+
+    filaDePrioridade.print();
+    filaDePrioridade.dequeue();
 
     return 0;
 }
+
+/* if (newFixa->preferencial == 'P') {
+                    if ( ultimo_P->proximo->preferencial == 'N' && ultimo_P->proximo->proximo->preferencial == 'N') {
+                        newFixa->proximo = ultimo_P->proximo->proximo->proximo;
+                        newFixa->anterior = ultimo_P->proximo->proximo;
+
+                        ultimo_P->proximo->proximo->proximo->anterior = newFixa;
+                        ultimo_P->proximo->proximo->proximo = newFixa;
+
+                        ultimo_P = newFixa;
+
+                        fixaAnterior->proximo = nullptr;
+                        fixaAnterior->anterior = newFixa;
+
+                        cout << "Fixa Atual: " << ultimo_P->preferencial << ultimo_P->operação << setfill('0') << setw(3) << ultimo_P->numero << endl;
+                        cout << "Fixa Anterior: " << ultimo_P->anterior->preferencial << ultimo_P->anterior->operação << setfill('0') << setw(3) << ultimo_P->anterior->numero << endl;
+                        
+                    } 
+                    else {
+                        newFixa->proximo = ultimo_P->proximo;
+                        newFixa->anterior = ultimo_P;
+
+                        ultimo_P->proximo->anterior = newFixa;
+
+                        ultimo_P = newFixa;
+
+                        fixaAnterior->proximo = nullptr;
+                        fixaAnterior->anterior = newFixa;
+
+                        cout << "Fixa Atual: " << ultimo_P->preferencial << ultimo_P->operação << setfill('0') << setw(3) << ultimo_P->numero << endl;
+                        cout << "Fixa Anterior: " << ultimo_P->anterior->preferencial << ultimo_P->anterior->operação << setfill('0') << setw(3) << ultimo_P->anterior->numero << endl;
+                    }
+                } 
+                else {
+                    newFixa->proximo = nullptr;
+                    newFixa->anterior = fixaAnterior;
+
+                    instanciaAnterior = newFixa;
+                } */
