@@ -4,7 +4,7 @@
 
 using namespace std;
 
-struct Fixa {
+struct Ficha {
     char preferencial;
     char operação;
     int numero;
@@ -13,10 +13,10 @@ struct Fixa {
     static int contador_S;
     static int contador_D;
     static int contador_F;
-    //ponteiro que aponta para um nova instancia do tipo Fixa que será a proxima no fila
-    Fixa* proximo = nullptr;
+    //ponteiro que aponta para um nova instancia do tipo Ficha que será a proxima no fila
+    Ficha* proximo = nullptr;
 
-    Fixa(char preferencial, char operação){
+    Ficha(char preferencial, char operação){
         this->preferencial = preferencial;
         this->operação = operação;
 
@@ -52,98 +52,112 @@ struct Fixa {
     }
 };
 
+struct Painel{
+        char preferencial;
+        char operação;
+        int numero;
+};
+
+
 //Iniciando contadores estáticos
-int Fixa::contador_E = -1;
-int Fixa::contador_S = -1;
-int Fixa::contador_D = -1;
-int Fixa::contador_F = -1;
+int Ficha::contador_E = -1;
+int Ficha::contador_S = -1;
+int Ficha::contador_D = -1;
+int Ficha::contador_F = -1;
 
 class Fila {
     private:
-        Fixa* front = nullptr;
+        Ficha* front = nullptr;
         
-        Fixa* ultimo_P = nullptr;
+        Ficha* ultimo_P = nullptr;
+        Painel painel[5];
+        int index = 0;
 
     public:
-        void empilhar(char preferencial, char operação){
-            Fixa* newFixa = new Fixa(preferencial, operação);
-            //Fixa* ant_atnterior = nullptr;
+        void enfileirar(char preferencial, char operação){
+            Ficha* newFicha = new Ficha(preferencial, operação);
+            Ficha* atual = nullptr;
             if(front == nullptr){
-                //newFixa é a instancia que esta sendo criada no momento
+                //newFicha é a instancia que esta sendo criada no momento
                 //o proximo e anterior dessa instancia sera null pois é a primeira instancia criada
-                newFixa->proximo = nullptr;
+                newFicha->proximo = nullptr;
                 
 
                 //front apontara para essa nova instancia que foi criada
-                front = newFixa;
-
-                if (front->preferencial == 'P')
-                {
-                    ultimo_P = newFixa;
-                    ultimo_P->proximo = newFixa->proximo;
-                    
-                }
+                front = newFicha;
                 
             }
 
-            else if (newFixa->preferencial == 'P')
+            else if (newFicha->preferencial == 'P')
             {
-                Fixa* atual = front;
-                int contador_deN = 0;
+                atual = front;
+                int contador_deN = 0; 
 
-                while (atual->proximo->preferencial == 'N')
+                while (atual->proximo != nullptr)
                 {
-                    atual = atual->proximo;
-                    contador_deN++;
-
                     
-
-                    if (contador_deN == 2)
+                    if (atual->preferencial == 'P')
                     {
-                        if (atual->proximo == )
-                        {
-                            /* code */
-                        }
-                        
                         contador_deN = 0;
                     }
-                    
-                }
-                
-                
 
+                    else{
+                        contador_deN++;
+                        if(contador_deN == 2){
+                            if (atual->proximo->preferencial == 'P')
+                            {
+                                atual = atual->proximo;
+                            }
+                            else{
+                                newFicha->proximo = atual->proximo;
+                                atual->proximo = newFicha;
+                                atual = newFicha->proximo;
+                                contador_deN = 0;
+                            }
+                        }
+                    }
+                    atual = atual->proximo;
+                    
+                }      
                 
-                        
-                    
-                    
             }
             
 
             else{
-                //fixaAnterior recebe instanciaAnterior que por sua vez apota para a ultima instancia de Fixa que foi criada
-                Fixa* atual = front;
+                atual = front;
 
                 while (atual->proximo != nullptr)
-                {
+                {                   
                     atual = atual->proximo;
                 }
-
-                newFixa->proximo = atual->proximo;
-                atual->proximo = newFixa;
-
+ 
+                newFicha->proximo = atual->proximo;
+                atual->proximo = newFicha;
                 
             }
-
             cout << endl;
+
         }
+        
+
 
 
          //desenfileirar
-        void dequeue() {
+        void desenfileirar() {
             if (!isEmpty()) {
-                Fixa* nodeToDelete = front;
+                painel[index].preferencial = front->preferencial;
+                painel[index].operação = front->operação;
+                painel[index].numero = front->numero;
+                index++;
+
+                cout << "\nFicha Atual: " << front->preferencial << front->operação << setfill('0') << setw(3) << front->numero << endl;
+
+                Ficha* nodeToDelete = front;
                 front = front->proximo;
                 delete nodeToDelete;
+            }
+            else{
+                cout << "A fila está vazia" << endl;
             }
         }
         
@@ -151,39 +165,55 @@ class Fila {
         bool isEmpty(){
             return front == nullptr;
         }
-        
-        //imprimir elementos
-        void print(){
-            if (isEmpty()) {
-                cout << "Priority queue is empty." << endl;
-                return;
-            }
 
-            Fixa* current = front;
-            while (current != nullptr) {
-                cout << "Fixa Atual: " << current->preferencial << current->operação << setfill('0') << setw(3) << current->numero << endl;
-                current = current->proximo;
+        void mostrarPainel(){
+            for (int i = 0; i <= index; i++)
+            {
+                cout << painel[i].preferencial << painel[i].operação << setfill('0') << setw(3) << painel[i].numero << endl;
             }
+            
         }
 };
 
 
 int main(){
     Fila filaDePrioridade;
-    filaDePrioridade.empilhar('N', 'S');
-    filaDePrioridade.empilhar('N', 'E');
-    filaDePrioridade.empilhar('N', 'F');
-    filaDePrioridade.empilhar('N', 'S');
-    filaDePrioridade.empilhar('N', 'E');
-    filaDePrioridade.empilhar('N', 'D');
-    filaDePrioridade.empilhar('N', 'E');
-    filaDePrioridade.empilhar('N', 'D');
-    filaDePrioridade.empilhar('N', 'F');
-    filaDePrioridade.empilhar('P', 'D');
+    char inputOperação;
+    char inputPreferencial;
+    int menuOpção;
 
+    while (true)
+    {
+        cout << "\nDigite o número da ação que deseja realizar: \n1 - Retirar Senha   2 - Chamar Senha   3 - Mostrar Panel   4 - Sair\n";
+        cin >> menuOpção;
 
-    filaDePrioridade.print();
-    filaDePrioridade.dequeue();
+        if (menuOpção == 1)
+        {
+            cout << "\nDigite a letra da operação que deseja realizar: \nS - Saque   D - Deposito   F - Financiamento   E - Empréstimo\n";
+            cin >> inputOperação;
+            cout << "\nInforme a prioridade dessa operação: \nP - Preferencial   N - Não Preferencial\n";
+            cin >> inputPreferencial;
+
+            filaDePrioridade.enfileirar(inputPreferencial, inputOperação);
+        }
+
+        else if (menuOpção == 2)
+        {
+            filaDePrioridade.desenfileirar();
+        }
+
+        else if (menuOpção == 3)
+        {
+            filaDePrioridade.mostrarPainel();
+        }
+
+        else{
+            cout << "Sair" << endl;
+            break;
+        }
+        
+        
+    }
 
     return 0;
 }
