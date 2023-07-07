@@ -217,27 +217,35 @@ int main(){
 
     while (menuOpção != 4)
     {
+        cout << "\n-------------------Menu-------------------\n";
         cout << "\nDigite o número da ação que deseja realizar: \n1 - Retirar Senha   2 - Chamar Senha   3 - Mostrar Panel   4 - Sair\n";
         cin >> menuOpção;
+        cout << "\n------------------------------------------\n";
 
         if (menuOpção == 1)
         {
+            cout << "\n-------------------Operação-------------------\n";
             cout << "\nDigite a letra da operação que deseja realizar: \nS - Saque   D - Deposito   F - Financiamento   E - Empréstimo\n";
             cin >> inputOperação;
             cout << "\nInforme a prioridade dessa operação: \nP - Preferencial   N - Não Preferencial\n";
             cin >> inputPreferencial;
+            cout << "\n----------------------------------------------\n";
 
             filaDePrioridade.enfileirar(inputPreferencial, inputOperação);
         }
 
         else if (menuOpção == 2)
         {
+            cout << "\n----------------------------------------------\n";
             filaDePrioridade.desenfileirar();
+            cout << "\n----------------------------------------------\n";
         }
 
         else if (menuOpção == 3)
         {
+            cout << "\n-------------------Ultimas Fichas Chamadas-------------------\n";
             filaDePrioridade.mostrarPainel();
+            cout << "\n--------------------------------------------------------------\n";
         }   
         
     }
