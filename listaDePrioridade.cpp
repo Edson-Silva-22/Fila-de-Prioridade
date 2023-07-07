@@ -116,7 +116,7 @@ class Fila {
                             atual->proximo = newFicha;
                             atual = newFicha;
                             contador_deN = 0;
-                            //Quando a nova Ficha preferencial já foi posicionada o loop para não contabilizar todas as outras instancias que já estão na fila depois.
+                            //Quando a nova Ficha preferencial já foi posicionada o loop é interrompido para não contabilizar todas as outras instancias que já estão na fila depois.
                             break;
                         }
                     }
