@@ -68,10 +68,10 @@ int Ficha::contador_F = -1;
 class Fila {
     private:
         Ficha* front = nullptr;
-        
         Ficha* ultimo_P = nullptr;
-        Painel painel[5];
+        Painel ultimasFichs[5];
         int index = 0;
+        int tamanho = -1;
 
     public:
         void enfileirar(char preferencial, char operação){
@@ -79,7 +79,7 @@ class Fila {
             Ficha* atual = nullptr;
             if(front == nullptr){
                 //newFicha é a instancia que esta sendo criada no momento
-                //o proximo e anterior dessa instancia sera null pois é a primeira instancia criada
+                //o proximo dessa instancia sera null pois é a primeira instancia criada
                 newFicha->proximo = nullptr;
                 
 
@@ -87,42 +87,56 @@ class Fila {
                 front = newFicha;
                 
             }
-
+            //Se a nova instancia de ficha é uma ficha preferencial
             else if (newFicha->preferencial == 'P')
             {
                 atual = front;
                 int contador_deN = 0; 
 
+                //Se a primeira instancia que foi criada for preferencial o contador recebe -1 para não contabilizar essa instancia
+                if (front->preferencial == 'P')
+                {
+                    contador_deN = -1;
+                }
+                
+                //Enquanto o proximo de atual for diferente de nullptr esse bloco será executado
                 while (atual->proximo != nullptr)
                 {
                     
-                    if (atual->preferencial == 'P')
-                    {
-                        contador_deN = 0;
-                    }
-
-                    else{
-                        contador_deN++;
-                        if(contador_deN == 2){
-                            if (atual->proximo->preferencial == 'P')
-                            {
-                                atual = atual->proximo;
-                            }
-                            else{
-                                newFicha->proximo = atual->proximo;
-                                atual->proximo = newFicha;
-                                atual = newFicha->proximo;
-                                contador_deN = 0;
-                            }
+                    contador_deN++;
+                    if(contador_deN == 2){
+                        //Se uma outra ficha preferencial já estiver presente depois do intervalo de duas fichas não preferenciais
+                        if (atual->proximo->preferencial == 'P')
+                        {
+                            //o contador recebe -1 para não contabilizar essa instancia
+                            contador_deN = -1;
+                        }
+                        else{
+                            newFicha->proximo = atual->proximo;
+                            atual->proximo = newFicha;
+                            atual = newFicha;
+                            contador_deN = 0;
+                            //Quando a nova Ficha preferencial já foi posicionada o loop para não contabilizar todas as outras instancias que já estão na fila depois.
+                            break;
                         }
                     }
+                    //Atual avançara para a proxima instancia da fila.
                     atual = atual->proximo;
                     
-                }      
+                } 
+
+                // quando a nova Ficha preferencial não se encaixou em nenhum intervalo de não preferenciais ela será adicionada no final da fila.
+                if (atual->proximo == nullptr)
+                {
+                    newFicha->proximo = atual->proximo;
+                    atual->proximo = newFicha;
+                }
+                
+                     
                 
             }
             
-
+            //Se a nova instancia de ficha é uma ficha não preferencial
             else{
                 atual = front;
 
@@ -140,17 +154,32 @@ class Fila {
         }
         
 
-
-
          //desenfileirar
         void desenfileirar() {
             if (!isEmpty()) {
-                painel[index].preferencial = front->preferencial;
-                painel[index].operação = front->operação;
-                painel[index].numero = front->numero;
-                index++;
 
-                cout << "\nFicha Atual: " << front->preferencial << front->operação << setfill('0') << setw(3) << front->numero << endl;
+                //realocando posições da fila para que a a exibição das ultimas 5 fichas chamadas seja atualizada
+                //Quando a fila já conter 5 fichas
+                //posição 0 da fila vai receber o que esta na posição 1 , posição 1 da fila vai receber o que esta na posição 2, posição 2 da fila vai receber o que esta na posição 3, posição 3 da fila vai receber o que esta na posição 4 e posição 4 da fila vai receber a nova ficha que chegou 
+                if (tamanho >= 4) {
+                    for (int i = 0; i < 4; i++) {
+                        ultimasFichs[i] = ultimasFichs[i + 1];
+                    }
+                    ultimasFichs[4].preferencial = front->preferencial;
+                    ultimasFichs[4].operação = front->operação;
+                    ultimasFichs[4].numero = front->numero;
+                }
+                //Adicionado as primeiras 5 fichas que foram chamadas
+                else{
+                    //as fichas são adicionadas de acordo com o contador index
+                    ultimasFichs[index].preferencial = front->preferencial;
+                    ultimasFichs[index].operação = front->operação;
+                    ultimasFichs[index].numero = front->numero;
+                    index++;
+                    tamanho++;
+                }
+
+                cout << "\nFicha Chamada: " << front->preferencial << front->operação << setfill('0') << setw(3) << front->numero << endl;
 
                 Ficha* nodeToDelete = front;
                 front = front->proximo;
@@ -167,12 +196,16 @@ class Fila {
         }
 
         void mostrarPainel(){
-            for (int i = 0; i <= index; i++)
-            {
-                cout << painel[i].preferencial << painel[i].operação << setfill('0') << setw(3) << painel[i].numero << endl;
-            }
-            
+             
+            for (int i = 0; i <= tamanho; i++) {
+                cout << ultimasFichs[i].preferencial << ultimasFichs[i].operação << setfill('0') << setw(3) << ultimasFichs[i].numero << endl;
+            } 
         }
+
+        void print() {
+        {
+        }
+    }
 };
 
 
@@ -182,7 +215,7 @@ int main(){
     char inputPreferencial;
     int menuOpção;
 
-    while (true)
+    while (menuOpção != 4)
     {
         cout << "\nDigite o número da ação que deseja realizar: \n1 - Retirar Senha   2 - Chamar Senha   3 - Mostrar Panel   4 - Sair\n";
         cin >> menuOpção;
@@ -205,13 +238,7 @@ int main(){
         else if (menuOpção == 3)
         {
             filaDePrioridade.mostrarPainel();
-        }
-
-        else{
-            cout << "Sair" << endl;
-            break;
-        }
-        
+        }   
         
     }
 
