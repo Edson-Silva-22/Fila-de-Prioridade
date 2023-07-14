@@ -205,6 +205,11 @@ class Fila {
 
         void print() {
         {
+            Ficha* current = front;
+            while (current != nullptr) {
+                cout << current->preferencial << current->operação << setfill('0') << setw(3) << current->numero << endl;
+                current = current->proximo;
+            }
         }
     }
 };
@@ -216,7 +221,19 @@ int main(){
     char inputPreferencial;
     int menuOpção;
 
-    while (menuOpção != 4)
+    filaDePrioridade.enfileirar('N','D');
+    filaDePrioridade.enfileirar('N','D');
+    filaDePrioridade.enfileirar('N','F');
+    filaDePrioridade.enfileirar('N','D');
+    filaDePrioridade.enfileirar('N','E');
+    filaDePrioridade.enfileirar('N','S');
+    filaDePrioridade.enfileirar('P','E');
+    filaDePrioridade.enfileirar('N','F');
+    filaDePrioridade.enfileirar('P','S');
+
+    filaDePrioridade.print();
+
+    /* while (menuOpção != 4)
     {
         cout << "\n-------------------Menu-------------------\n";
         cout << "\nDigite o número da ação que deseja realizar: \n1 - Retirar Senha   2 - Chamar Senha   3 - Mostrar Panel   4 - Sair\n";
@@ -249,7 +266,7 @@ int main(){
             cout << "\n--------------------------------------------------------------\n";
         }   
         
-    }
+    } */
 
     return 0;
 }
